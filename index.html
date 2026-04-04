@@ -21,87 +21,96 @@ table input,table select{width:100%;}
 
 <h1 class="text-2xl font-bold text-center mb-4">Billing Report Generator</h1>
 
-<!-- Header Fields -->
+<!-- Header -->
 <div class="grid grid-cols-2 gap-6 mb-4">
   <div>
     <label>Customer Name</label>
     <input id="clientName" value="CHETAN ATMARAM HATMODE">
 
-    <label>Customer Address (Single Line)</label>
+    <label>Customer Address</label>
     <input id="clientAddr" value="At-Giravle, Post- Somatane, Tal- Panvel, Dist- Raigad, PIN- 410206">
   </div>
 
   <div>
     <label>Date</label>
-    <input type="date" id="invoiceDate" value="2025-10-10">
+    <input type="date" id="invoiceDate">
 
     <label class="mt-2 block">Invoice No</label>
     <input id="invoiceNo" value="28">
   </div>
 </div>
 
-<div class="grid grid-cols-1 gap-2 mb-4">
-  <div>
-    <label>Company</label>
-    <textarea id="company" rows="4">TODAYGLOBAL PROPERTIES OfficeNo. 1601-1602, 16thFloor, Kesar Solitaire, Plot No.5, Palm Beach Road, Sector-19, Sanpada, Navi Mumbai Maharashtra-400705</textarea>
-  </div>
+<div class="mb-4">
+  <label>Company</label>
+  <textarea id="company" rows="4">TODAYGLOBAL PROPERTIES OfficeNo. 1601-1602, Navi Mumbai</textarea>
 </div>
 
-<!-- Subject -->
 <div class="mb-4">
   <label>Subject</label>
-  <input id="subject" value="Construction & Sales Office Water Supply At- Giravale Site (SAUBHAGYAM)">
+  <input id="subject" value="Water Supply Work">
 </div>
 
 <!-- Table -->
-<table class="table-auto w-full border mb-4" id="invoiceTable">
+<table class="table-auto w-full border mb-4">
 <thead class="bg-gray-100">
 <tr>
-<th class="border p-1">Sr No</th>
-<th class="border p-1">Date</th>
-<th class="border p-1">Material</th>
-<th class="border p-1">Challan No</th>
-<th class="border p-1">Trip No</th>
-<th class="border p-1">Tanker No</th>
-<th class="border p-1">Amount</th>
-<th class="border p-1">Action</th>
+<th class="border">Sr No</th>
+<th class="border">Date</th>
+<th class="border">Material</th>
+<th class="border">Challan</th>
+<th class="border">Trip</th>
+<th class="border">Tanker</th>
+<th class="border">Amount</th>
+<th class="border">Action</th>
 </tr>
 </thead>
 
 <tbody id="tableBody">
 <tr>
-<td class="border p-1 text-center">1</td>
-<td class="border p-1"><input type="date" value="2025-09-02"></td>
-<td class="border p-1"><input value="Water Tanker"></td>
-<td class="border p-1"><input value="624"></td>
-<td class="border p-1"><input value="1"></td>
-<td class="border p-1">
+<td class="border text-center">1</td>
+<td class="border"><input type="date"></td>
+<td class="border"><input value="Water Tanker"></td>
+<td class="border"><input></td>
+<td class="border"><input value="1"></td>
+<td class="border">
 <select>
-<option value="MH06BD0396">MH06BD0396</option>
-<option value="MH24F9843" selected>MH24F9843</option>
-<option value="MH20BT2374">MH20BT2374</option>
+<option>MH06BD0396</option>
+<option>MH24F9843</option>
+<option>MH20BT2374</option>
 </select>
 </td>
-<td class="border p-1"><input type="number" placeholder="Enter Amount"></td>
-<td class="border p-1 text-center">
-<button onclick="removeRow(this)" class="text-red-500">✖</button>
+<td class="border"><input type="number" placeholder="Enter Amount"></td>
+<td class="border text-center">
+<button onclick="removeRow(this)">✖</button>
 </td>
 </tr>
 </tbody>
 </table>
 
-<div class="flex justify-between mb-6">
-<button onclick="addRow()" class="bg-green-500 text-white px-3 py-1 rounded">+ Add Row</button>
-<button id="generatePDF" class="bg-blue-600 text-white px-4 py-2 rounded shadow">Generate PDF</button>
-</div>
+<button onclick="addRow()" class="bg-green-500 text-white px-3 py-1">+ Add Row</button>
+<button id="generatePDF" class="bg-blue-500 text-white px-3 py-1">Generate PDF</button>
 
 </div>
 
-<!-- jsPDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.3/jspdf.plugin.autotable.min.js"></script>
 
 <script>
+
+// Get First Date of Current Month
+function getFirstDateOfMonth(){
+  const t = new Date();
+  const yyyy = t.getFullYear();
+  const mm = String(t.getMonth()+1).padStart(2,'0');
+  return `${yyyy}-${mm}-01`;
+}
+
+// Set default dates on load
+document.addEventListener("DOMContentLoaded", ()=>{
+  const firstDate = getFirstDateOfMonth();
+  document.getElementById("invoiceDate").value = firstDate;
+  document.querySelector("#tableBody input[type='date']").value = firstDate;
+});
 
 // Add Row
 function addRow(){
@@ -110,122 +119,68 @@ function addRow(){
   const i=tbody.rows.length;
 
   row.innerHTML=`
-    <td class="border p-1 text-center">${i}</td>
-    <td class="border p-1"><input type="date"></td>
-    <td class="border p-1"><input value="Water Tanker"></td>
-    <td class="border p-1"><input></td>
-    <td class="border p-1"><input value="1"></td>
-    <td class="border p-1">
+    <td class="border text-center">${i}</td>
+    <td class="border"><input type="date" value="${getFirstDateOfMonth()}"></td>
+    <td class="border"><input value="Water Tanker"></td>
+    <td class="border"><input></td>
+    <td class="border"><input value="1"></td>
+    <td class="border">
       <select>
-        <option value="MH06BD0396">MH06BD0396</option>
-        <option value="MH24F9843">MH24F9843</option>
-        <option value="MH20BT2374">MH20BT2374</option>
+        <option>MH06BD0396</option>
+        <option>MH24F9843</option>
+        <option>MH20BT2374</option>
       </select>
     </td>
-    <td class="border p-1"><input type="number" placeholder="Enter Amount"></td>
-    <td class="border p-1 text-center">
-      <button onclick="removeRow(this)" class="text-red-500">✖</button>
+    <td class="border"><input type="number" placeholder="Enter Amount"></td>
+    <td class="border text-center">
+      <button onclick="removeRow(this)">✖</button>
     </td>`;
 }
 
 // Remove Row
 function removeRow(btn){
   btn.closest("tr").remove();
-  const rows=document.querySelectorAll("#tableBody tr");
-  rows.forEach((r,i)=>r.cells[0].textContent=i+1);
+  [...document.querySelectorAll("#tableBody tr")].forEach((r,i)=>r.cells[0].innerText=i+1);
 }
 
-// Date Format
-function formatDate(input){
-  if(!input) return "";
-  const [y,m,d]=input.split("-");
-  return `${d}-${m}-${y}`;
+// Format Date
+function formatDate(d){
+  if(!d) return "";
+  const [y,m,da]=d.split("-");
+  return `${da}-${m}-${y}`;
 }
 
 // Generate PDF
-document.getElementById("generatePDF").addEventListener("click",()=>{
+document.getElementById("generatePDF").onclick = ()=>{
   const {jsPDF}=window.jspdf;
-  const doc=new jsPDF({unit:"mm",format:"a4"});
+  const doc=new jsPDF();
 
-  const clientName=document.getElementById("clientName").value;
-  const clientAddr=document.getElementById("clientAddr").value;
-  const company=document.getElementById("company").value;
-  const invoiceNo=document.getElementById("invoiceNo").value;
-  const invoiceDate=formatDate(document.getElementById("invoiceDate").value);
-  const subject=document.getElementById("subject").value;
-
-  doc.setFontSize(13);
-  doc.setTextColor(255,0,0);
-  doc.text(clientName,105,20,{align:"center"});
-
-  doc.setFontSize(10);
-  doc.setTextColor(0,0,0);
-  doc.text(clientAddr,105,26,{align:"center"});
-  doc.line(40,28,170,28);
-
-  doc.text("TO,",15,38);
-  doc.text(`Date: ${invoiceDate}`,150,38);
-
-  doc.text("TODAYGLOBAL PROPERTIES",15,44);
-  doc.text(`Invoice No: ${invoiceNo}`,150,44);
-  doc.text(company,15,49,{maxWidth:180});
-
-  let yPos=71;
-  doc.text(`Sub: ${subject}`,15,yPos,{maxWidth:180});
-
-  const rows=[...document.querySelectorAll("#tableBody tr")];
-  const bodyData=[];
+  let rows=[];
   let total=0;
 
-  rows.forEach((r,i)=>{
-    const inputs=[...r.querySelectorAll("input, select")];
-    if(inputs.length===0) return;
+  document.querySelectorAll("#tableBody tr").forEach((r,i)=>{
+    const inp=r.querySelectorAll("input,select");
+    const amt=parseFloat(inp[5].value||0);
+    total+=amt;
 
-    const date=formatDate(inputs[0].value || "");
-    const material=inputs[1].value || "";
-    const challan=inputs[2].value || "";
-    const trip=inputs[3].value || 1;
-    const tanker=inputs[4].value || "";
-    const amount=parseFloat(inputs[5].value || 0);
-
-    if(!date && !material && amount===0) return;
-
-    total+=amount;
-    bodyData.push([i+1,date,material,challan,trip,tanker,amount.toFixed(2)]);
+    rows.push([
+      i+1,
+      formatDate(inp[0].value),
+      inp[1].value,
+      inp[2].value,
+      inp[3].value,
+      inp[4].value,
+      amt.toFixed(2)
+    ]);
   });
-
-  bodyData.push(["","","","","","Total",total.toFixed(2)]);
 
   doc.autoTable({
-    startY:yPos+5,
-    head:[["Sr No","Date","Material","Challan No","Trip No","Tanker No","Amount"]],
-    body:bodyData,
-    theme:'grid'
+    head:[["No","Date","Material","Challan","Trip","Tanker","Amount"]],
+    body:rows
   });
 
-  const y=doc.lastAutoTable.finalY+10;
-  doc.text(`Rupees: ${convertToWords(total)} Only/-`,15,y);
-
-  doc.save(`Invoice_${invoiceNo}.pdf`);
-});
-
-// Convert number to words
-function convertToWords(num){
-  const ones=["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine"];
-  const teens=["Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
-  const tens=["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
-
-  function inWords(n){
-    if(n<10)return ones[n];
-    if(n<20)return teens[n-10];
-    if(n<100)return tens[Math.floor(n/10)]+(n%10?" "+ones[n%10]:"");
-    if(n<1000)return ones[Math.floor(n/100)]+" Hundred "+inWords(n%100);
-    if(n<100000)return inWords(Math.floor(n/1000))+" Thousand "+inWords(n%1000);
-    if(n<10000000)return inWords(Math.floor(n/100000))+" Lakh "+inWords(n%100000);
-    return inWords(Math.floor(n/10000000))+" Crore "+inWords(n%10000000);
-  }
-
-  return inWords(Math.round(num)).trim();
+  doc.text("Total: "+total.toFixed(2),10,doc.lastAutoTable.finalY+10);
+  doc.save("bill.pdf");
 }
 
 </script>
