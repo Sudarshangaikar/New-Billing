@@ -82,7 +82,7 @@ table input,table select{width:100%;}
 <option value="MH20BT2374">MH20BT2374</option>
 </select>
 </td>
-<td class="border p-1"><input type="number" value="1200"></td>
+<td class="border p-1"><input type="number" placeholder="Enter Amount"></td>
 <td class="border p-1 text-center">
 <button onclick="removeRow(this)" class="text-red-500">✖</button>
 </td>
@@ -103,7 +103,7 @@ table input,table select{width:100%;}
 
 <script>
 
-// Add Row (Trip default = 1)
+// Add Row
 function addRow(){
   const tbody=document.getElementById("tableBody");
   const row=tbody.insertRow();
@@ -114,7 +114,7 @@ function addRow(){
     <td class="border p-1"><input type="date"></td>
     <td class="border p-1"><input value="Water Tanker"></td>
     <td class="border p-1"><input></td>
-    <td class="border p-1"><input value="1"></td> <!-- FIX -->
+    <td class="border p-1"><input value="1"></td>
     <td class="border p-1">
       <select>
         <option value="MH06BD0396">MH06BD0396</option>
@@ -122,7 +122,7 @@ function addRow(){
         <option value="MH20BT2374">MH20BT2374</option>
       </select>
     </td>
-    <td class="border p-1"><input type="number" value="0"></td>
+    <td class="border p-1"><input type="number" placeholder="Enter Amount"></td>
     <td class="border p-1 text-center">
       <button onclick="removeRow(this)" class="text-red-500">✖</button>
     </td>`;
