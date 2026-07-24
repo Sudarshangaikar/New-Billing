@@ -2,94 +2,73 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Billing Report Generator</title>
+<title>Invoice Generator</title>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
 
 <style>
-body { background:#f8fafc;font-family:'Segoe UI'; }
+body{background:#f8fafc;font-family:Arial;}
 input,textarea,select{
   border:1px solid #000;
-  border-radius:5px;
   padding:4px;
   width:100%;
 }
-label{font-weight:600;}
+table{border-collapse:collapse;}
+th,td{border:1px solid #000;font-size:12px;padding:4px;text-align:center;}
 </style>
 </head>
 
 <body class="p-6">
 
-<div class="max-w-6xl mx-auto bg-white p-6 shadow rounded">
+<div class="max-w-6xl mx-auto bg-white p-6 shadow">
 
-<h1 class="text-xl font-bold text-center mb-4">Billing Report Generator</h1>
+<h2 class="text-center font-bold text-lg mb-4">Billing Generator</h2>
 
-<!-- Header -->
-<div class="grid grid-cols-2 gap-4 mb-4">
-  <div>
-    <label>Customer Name</label>
-    <input id="clientName" value="CHETAN ATMARAM HATMODE">
+<!-- FORM -->
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label>Customer Name</label>
+<input id="clientName" value="CHETAN ATMARAM HATMODE">
 
-    <label class="mt-2">Customer Address</label>
-    <textarea id="clientAddr">At-Giravle, Post-Somatane, Tal-Panvel, Dist-Raigad, PIN-410206</textarea>
-  </div>
-
-  <div>
-    <label>Date</label>
-    <input type="date" id="invoiceDate">
-
-    <label class="mt-2">Invoice No</label>
-    <input id="invoiceNo" value="28">
-  </div>
+<label>Address</label>
+<textarea id="clientAddr">At-Giravle, Post-Somatane, Tal-Panvel, Dist-Raigad, PIN-410206</textarea>
 </div>
 
-<label>Company</label>
-<textarea id="company">TODAYGLOBAL PROPERTIES Pvt Ltd, Office No.1601-1602, Navi Mumbai</textarea>
+<div>
+<label>Date</label>
+<input type="date" id="invoiceDate">
+
+<label>Invoice No</label>
+<input id="invoiceNo" value="41">
+</div>
+</div>
+
+<label class="mt-2">Company</label>
+<textarea id="company">TODAYGLOBAL PROPERTIES Office No.1601-1602, 16th Floor, Kesar Solitaire, Plot No.5, Palm Beach Road, Sector-19, Sanpada, Navi Mumbai Maharashtra-400705</textarea>
 
 <label class="mt-2">Subject</label>
-<input id="subject" value="Water Supply Work">
+<input id="subject" value="Construction & Sales Office Water Supply At Giravale Site (SAUBHAGYAM 2)">
 
-<!-- Table -->
-<table class="w-full border mt-4">
+<!-- TABLE -->
+<table class="w-full mt-4">
 <thead>
-<tr class="bg-gray-200">
-<th class="border">No</th>
-<th class="border">Date</th>
-<th class="border">Material</th>
-<th class="border">Challan</th>
-<th class="border">Trip</th>
-<th class="border">Tanker</th>
-<th class="border">Amount</th>
-<th class="border">Action</th>
+<tr>
+<th>No</th>
+<th>Date</th>
+<th>Material</th>
+<th>Challan</th>
+<th>Trip</th>
+<th>Tanker</th>
+<th>Amount</th>
+<th>Action</th>
 </tr>
 </thead>
 
-<tbody id="tableBody">
-<tr>
-<td class="border text-center">1</td>
-<td class="border"><input type="date"></td>
-<td class="border"><input value="Water Tanker"></td>
-<td class="border"><input></td>
-<td class="border"><input value="1"></td>
-<td class="border">
-<select>
-<option>MH06BD0396</option>
-<option>MH24F9843</option>
-<option>MH20BT2374</option>
-<option>MH12FZ6990</option>
-</select>
-</td>
-<td class="border"><input type="number"></td>
-<td class="border text-center">
-<button onclick="removeRow(this)">✖</button>
-</td>
-</tr>
-</tbody>
+<tbody id="tableBody"></tbody>
 </table>
 
 <button onclick="addRow()" class="bg-green-500 text-white px-3 py-1 mt-2">+ Add Row</button>
-<button id="generatePDF" class="bg-blue-500 text-white px-3 py-1 mt-2">Generate PDF</button>
+<button onclick="generatePDF()" class="bg-blue-500 text-white px-3 py-1 mt-2">Generate PDF</button>
 
 </div>
 
@@ -98,151 +77,147 @@ label{font-weight:600;}
 
 <script>
 
-// date default
-function getFirstDate(){
+// DEFAULT DATE
+function getDate(){
   let d=new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;
 }
 
-document.addEventListener("DOMContentLoaded",()=>{
-  let d=getFirstDate();
-  document.getElementById("invoiceDate").value=d;
-  document.querySelector("#tableBody input").value=d;
-});
+document.getElementById("invoiceDate").value=getDate();
 
-// add row
+// ADD ROW
 function addRow(){
-  let tbody=document.getElementById("tableBody");
-  let i=tbody.rows.length+1;
+  let t=document.getElementById("tableBody");
+  let i=t.rows.length+1;
 
-  let row=tbody.insertRow();
-  row.innerHTML=`
-<td class="border text-center">${i}</td>
-<td class="border"><input type="date" value="${getFirstDate()}"></td>
-<td class="border"><input value="Water Tanker"></td>
-<td class="border"><input></td>
-<td class="border"><input value="1"></td>
-<td class="border">
+  let r=t.insertRow();
+  r.innerHTML=`
+<td>${i}</td>
+<td><input type="date" value="${getDate()}"></td>
+<td><input value="Water Tanker"></td>
+<td><input></td>
+<td><input value="1"></td>
+<td>
 <select>
 <option>MH06BD0396</option>
 <option>MH24F9843</option>
 <option>MH20BT2374</option>
-<option>MH12FZ6990</option>
 </select>
 </td>
-<td class="border"><input type="number"></td>
-<td class="border text-center"><button onclick="removeRow(this)">✖</button></td>`;
+<td><input type="number"></td>
+<td><button onclick="removeRow(this)">X</button></td>`;
 }
 
-// remove row
-function removeRow(btn){
-  btn.closest("tr").remove();
+// REMOVE ROW
+function removeRow(b){
+  b.closest("tr").remove();
   [...document.querySelectorAll("#tableBody tr")]
   .forEach((r,i)=>r.cells[0].innerText=i+1);
 }
 
-// date format
-function formatDate(d){
-  if(!d) return "";
+// DATE FORMAT
+function fDate(d){
+  if(!d)return "";
   let [y,m,da]=d.split("-");
   return `${da}-${m}-${y}`;
 }
 
-// amount in words
-function numberToWords(num){
-  let a = ["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten",
-  "Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
-  let b = ["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+// NUMBER TO WORDS (FIXED)
+function toWords(num){
+  let a=["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+  let b=["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
 
-  if(num==0) return "Zero";
-
-  if(num<20) return a[num];
-  if(num<100) return b[Math.floor(num/10)]+" "+a[num%10];
-  if(num<1000) return a[Math.floor(num/100)]+" Hundred "+numberToWords(num%100);
-  if(num<100000) return numberToWords(Math.floor(num/1000))+" Thousand "+numberToWords(num%1000);
+  if(num<20)return a[num];
+  if(num<100)return b[Math.floor(num/10)]+" "+a[num%10];
+  if(num<1000)return a[Math.floor(num/100)]+" Hundred "+toWords(num%100);
+  if(num<100000)return toWords(Math.floor(num/1000))+" Thousand "+toWords(num%1000);
   return num;
 }
 
-// PDF
-document.getElementById("generatePDF").onclick=()=>{
+// GENERATE PDF
+function generatePDF(){
 
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF();
 
   let y=10;
 
-  // header
-  doc.setFontSize(14);
-  doc.text("BILL",95,y);
-
-  y+=10;
-
   let name=document.getElementById("clientName").value;
   let addr=document.getElementById("clientAddr").value;
-  let date=formatDate(document.getElementById("invoiceDate").value);
+  let date=fDate(document.getElementById("invoiceDate").value);
   let inv=document.getElementById("invoiceNo").value;
   let comp=document.getElementById("company").value;
   let sub=document.getElementById("subject").value;
 
-  doc.setFontSize(10);
-
-  doc.text("Customer: "+name,10,y);
+  // HEADER (MATCH PDF)
+  doc.setFontSize(11);
+  doc.text(name,10,y);
   y+=6;
 
-  doc.text(doc.splitTextToSize("Address: "+addr,180),10,y);
-  y+=10;
+  doc.text(addr,10,y);
+  y+=6;
 
-  doc.text("Invoice No: "+inv,140,20);
-  doc.text("Date: "+date,140,26);
+  doc.text("TO,",10,y);
+  doc.text("Date: "+date,140,y);
+  y+=6;
 
-  doc.text(doc.splitTextToSize("Company: "+comp,180),10,y);
-  y+=10;
+  doc.text("TODAYGLOBAL PROPERTIES",10,y);
+  doc.text("Invoice No: "+inv,140,y);
+  y+=6;
 
-  doc.text("Subject: "+sub,10,y);
-  y+=10;
+  doc.text(doc.splitTextToSize(comp,180),10,y);
+  y+=12;
 
-  let rows=[], total=0;
+  doc.text("Sub: "+sub,10,y);
+  y+=8;
+
+  // TABLE
+  let rows=[],total=0;
 
   document.querySelectorAll("#tableBody tr").forEach((r,i)=>{
-    let inp=r.querySelectorAll("input,select");
+    let x=r.querySelectorAll("input,select");
 
-    let amt=parseFloat(inp[5].value||0);
+    let amt=parseFloat(x[5].value||0);
     total+=amt;
 
     rows.push([
       i+1,
-      formatDate(inp[0].value),
-      inp[1].value,
-      inp[2].value,
-      inp[3].value,
-      inp[4].value,
+      fDate(x[0].value),
+      x[1].value,
+      x[2].value,
+      x[3].value,
+      x[4].value,
       amt.toFixed(2)
     ]);
   });
 
   doc.autoTable({
     startY:y,
-    head:[["No","Date","Material","Challan","Trip","Tanker","Amount"]],
-    body:rows
+    head:[["Sr No","Date","Material","Challan No","Trip No","Tanker No","Amount"]],
+    body:rows,
+    styles:{fontSize:8}
   });
 
-  let finalY=doc.lastAutoTable.finalY+10;
+  let fy=doc.lastAutoTable.finalY+8;
 
-  // total
-  doc.text("Total: ₹ "+total.toFixed(2),140,finalY);
+  // TOTAL (RIGHT SIDE)
+  doc.text("Total  "+total.toFixed(2),150,fy);
 
-  finalY+=8;
+  fy+=8;
 
-  // amount in words
-  doc.text("Amount in Words: "+numberToWords(Math.floor(total))+" Only",10,finalY);
+  // WORDS (MATCH EXACT PDF FORMAT)
+  doc.text("Rupees: "+toWords(Math.floor(total))+" Only/-",10,fy);
 
-  finalY+=15;
+  fy+=15;
 
-  // footer name
-  doc.text("For "+comp,140,finalY);
+  // SIGNATURE
+  doc.text("For TODAYGLOBAL PROPERTIES",130,fy);
 
-  doc.save("Bill.pdf");
+  doc.save("Invoice.pdf");
 }
+
+// ADD FIRST ROW
+addRow();
 
 </script>
 
