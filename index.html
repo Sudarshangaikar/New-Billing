@@ -8,65 +8,60 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
 
 <style>
-body { background-color:#f8fafc;font-family:'Segoe UI',sans-serif; }
+body { background:#f8fafc;font-family:'Segoe UI'; }
 input,textarea,select{
   border:1px solid #000;
   border-radius:5px;
-  padding:4px 8px;
+  padding:4px;
   width:100%;
 }
 label{font-weight:600;}
-table input,table select{width:100%;}
 </style>
 </head>
 
 <body class="p-6">
 
-<div class="max-w-6xl mx-auto bg-white shadow-lg rounded-xl p-6">
+<div class="max-w-6xl mx-auto bg-white p-6 shadow rounded">
 
-<h1 class="text-2xl font-bold text-center mb-4">Billing Report Generator</h1>
+<h1 class="text-xl font-bold text-center mb-4">Billing Report Generator</h1>
 
 <!-- Header -->
-<div class="grid grid-cols-2 gap-6 mb-4">
+<div class="grid grid-cols-2 gap-4 mb-4">
   <div>
     <label>Customer Name</label>
     <input id="clientName" value="CHETAN ATMARAM HATMODE">
 
-    <label class="mt-2 block">Customer Address</label>
-    <input id="clientAddr" value="At-Giravle, Post- Somatane, Tal- Panvel, Dist- Raigad, PIN- 410206">
+    <label class="mt-2">Customer Address</label>
+    <textarea id="clientAddr">At-Giravle, Post-Somatane, Tal-Panvel, Dist-Raigad, PIN-410206</textarea>
   </div>
 
   <div>
     <label>Date</label>
     <input type="date" id="invoiceDate">
 
-    <label class="mt-2 block">Invoice No</label>
+    <label class="mt-2">Invoice No</label>
     <input id="invoiceNo" value="28">
   </div>
 </div>
 
-<div class="mb-4">
-  <label>Company</label>
-  <textarea id="company" rows="3">TODAYGLOBAL PROPERTIES OfficeNo. 1601-1602, Navi Mumbai</textarea>
-</div>
+<label>Company</label>
+<textarea id="company">TODAYGLOBAL PROPERTIES Pvt Ltd, Office No.1601-1602, Navi Mumbai</textarea>
 
-<div class="mb-4">
-  <label>Subject</label>
-  <input id="subject" value="Water Supply Work">
-</div>
+<label class="mt-2">Subject</label>
+<input id="subject" value="Water Supply Work">
 
 <!-- Table -->
-<table class="table-auto w-full border border-black mb-4">
+<table class="w-full border mt-4">
 <thead>
 <tr class="bg-gray-200">
-<th class="border border-black">Sr No</th>
-<th class="border border-black">Date</th>
-<th class="border border-black">Material</th>
-<th class="border border-black">Challan</th>
-<th class="border border-black">Trip</th>
-<th class="border border-black">Tanker</th>
-<th class="border border-black">Amount</th>
-<th class="border border-black">Action</th>
+<th class="border">No</th>
+<th class="border">Date</th>
+<th class="border">Material</th>
+<th class="border">Challan</th>
+<th class="border">Trip</th>
+<th class="border">Tanker</th>
+<th class="border">Amount</th>
+<th class="border">Action</th>
 </tr>
 </thead>
 
@@ -85,7 +80,7 @@ table input,table select{width:100%;}
 <option>MH12FZ6990</option>
 </select>
 </td>
-<td class="border"><input type="number" placeholder="Enter Amount"></td>
+<td class="border"><input type="number"></td>
 <td class="border text-center">
 <button onclick="removeRow(this)">✖</button>
 </td>
@@ -93,8 +88,8 @@ table input,table select{width:100%;}
 </tbody>
 </table>
 
-<button onclick="addRow()" class="bg-green-500 text-white px-3 py-1 rounded">+ Add Row</button>
-<button id="generatePDF" class="bg-blue-500 text-white px-3 py-1 rounded">Generate PDF</button>
+<button onclick="addRow()" class="bg-green-500 text-white px-3 py-1 mt-2">+ Add Row</button>
+<button id="generatePDF" class="bg-blue-500 text-white px-3 py-1 mt-2">Generate PDF</button>
 
 </div>
 
@@ -103,135 +98,150 @@ table input,table select{width:100%;}
 
 <script>
 
-// First Date of Current Month
-function getFirstDateOfMonth(){
-  const t = new Date();
-  const yyyy = t.getFullYear();
-  const mm = String(t.getMonth()+1).padStart(2,'0');
-  return `${yyyy}-${mm}-01`;
+// date default
+function getFirstDate(){
+  let d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;
 }
 
-// Set default date
-document.addEventListener("DOMContentLoaded", ()=>{
-  const firstDate = getFirstDateOfMonth();
-  document.getElementById("invoiceDate").value = firstDate;
-  document.querySelector("#tableBody input[type='date']").value = firstDate;
+document.addEventListener("DOMContentLoaded",()=>{
+  let d=getFirstDate();
+  document.getElementById("invoiceDate").value=d;
+  document.querySelector("#tableBody input").value=d;
 });
 
-// Add Row
+// add row
 function addRow(){
-  const tbody=document.getElementById("tableBody");
-  const row=tbody.insertRow();
-  const i=tbody.rows.length;
+  let tbody=document.getElementById("tableBody");
+  let i=tbody.rows.length+1;
 
+  let row=tbody.insertRow();
   row.innerHTML=`
-    <td class="border text-center">${i}</td>
-    <td class="border"><input type="date" value="${getFirstDateOfMonth()}"></td>
-    <td class="border"><input value="Water Tanker"></td>
-    <td class="border"><input></td>
-    <td class="border"><input value="1"></td>
-    <td class="border">
-      <select>
-        <option>MH06BD0396</option>
-        <option>MH24F9843</option>
-        <option>MH20BT2374</option>
-        <option>MH12FZ6990</option>
-      </select>
-    </td>
-    <td class="border"><input type="number" placeholder="Enter Amount"></td>
-    <td class="border text-center">
-      <button onclick="removeRow(this)">✖</button>
-    </td>`;
+<td class="border text-center">${i}</td>
+<td class="border"><input type="date" value="${getFirstDate()}"></td>
+<td class="border"><input value="Water Tanker"></td>
+<td class="border"><input></td>
+<td class="border"><input value="1"></td>
+<td class="border">
+<select>
+<option>MH06BD0396</option>
+<option>MH24F9843</option>
+<option>MH20BT2374</option>
+<option>MH12FZ6990</option>
+</select>
+</td>
+<td class="border"><input type="number"></td>
+<td class="border text-center"><button onclick="removeRow(this)">✖</button></td>`;
 }
 
-// Remove Row
+// remove row
 function removeRow(btn){
   btn.closest("tr").remove();
   [...document.querySelectorAll("#tableBody tr")]
-    .forEach((r,i)=>r.cells[0].innerText=i+1);
+  .forEach((r,i)=>r.cells[0].innerText=i+1);
 }
 
-// Format Date dd-mm-yyyy
+// date format
 function formatDate(d){
   if(!d) return "";
-  const [y,m,da]=d.split("-");
+  let [y,m,da]=d.split("-");
   return `${da}-${m}-${y}`;
 }
 
-// Generate PDF
-document.getElementById("generatePDF").onclick = ()=>{
+// amount in words
+function numberToWords(num){
+  let a = ["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten",
+  "Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+  let b = ["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+
+  if(num==0) return "Zero";
+
+  if(num<20) return a[num];
+  if(num<100) return b[Math.floor(num/10)]+" "+a[num%10];
+  if(num<1000) return a[Math.floor(num/100)]+" Hundred "+numberToWords(num%100);
+  if(num<100000) return numberToWords(Math.floor(num/1000))+" Thousand "+numberToWords(num%1000);
+  return num;
+}
+
+// PDF
+document.getElementById("generatePDF").onclick=()=>{
 
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF();
 
-  // Header Data
-  const clientName = document.getElementById("clientName").value;
-  const clientAddr = document.getElementById("clientAddr").value;
-  const invoiceDate = formatDate(document.getElementById("invoiceDate").value);
-  const invoiceNo = document.getElementById("invoiceNo").value;
-  const company = document.getElementById("company").value;
-  const subject = document.getElementById("subject").value;
+  let y=10;
 
-  // Header
+  // header
   doc.setFontSize(14);
-  doc.text("BILL", 90, 10);
+  doc.text("BILL",95,y);
+
+  y+=10;
+
+  let name=document.getElementById("clientName").value;
+  let addr=document.getElementById("clientAddr").value;
+  let date=formatDate(document.getElementById("invoiceDate").value);
+  let inv=document.getElementById("invoiceNo").value;
+  let comp=document.getElementById("company").value;
+  let sub=document.getElementById("subject").value;
 
   doc.setFontSize(10);
-  doc.text(`Customer: ${clientName}`,10,20);
-  doc.text(`Address: ${clientAddr}`,10,26);
 
-  doc.text(`Invoice No: ${invoiceNo}`,140,20);
-  doc.text(`Date: ${invoiceDate}`,140,26);
+  doc.text("Customer: "+name,10,y);
+  y+=6;
 
-  doc.text(`Company: ${company}`,10,34);
-  doc.text(`Subject: ${subject}`,10,40);
+  doc.text(doc.splitTextToSize("Address: "+addr,180),10,y);
+  y+=10;
 
-  let rows=[];
-  let total=0;
+  doc.text("Invoice No: "+inv,140,20);
+  doc.text("Date: "+date,140,26);
+
+  doc.text(doc.splitTextToSize("Company: "+comp,180),10,y);
+  y+=10;
+
+  doc.text("Subject: "+sub,10,y);
+  y+=10;
+
+  let rows=[], total=0;
 
   document.querySelectorAll("#tableBody tr").forEach((r,i)=>{
-    const inp=r.querySelectorAll("input,select");
+    let inp=r.querySelectorAll("input,select");
 
-    const date = inp[0].value;
-    const material = inp[1].value;
-    const challan = inp[2].value;
-    const trip = inp[3].value;
-    const tanker = inp[4].value;
-    const amount = parseFloat(inp[5].value || 0);
-
-    if(!date && !amount) return;
-
-    total += amount;
+    let amt=parseFloat(inp[5].value||0);
+    total+=amt;
 
     rows.push([
       i+1,
-      formatDate(date),
-      material,
-      challan,
-      trip,
-      tanker,
-      amount.toFixed(2)
+      formatDate(inp[0].value),
+      inp[1].value,
+      inp[2].value,
+      inp[3].value,
+      inp[4].value,
+      amt.toFixed(2)
     ]);
   });
 
-  // Table
   doc.autoTable({
-    startY:45,
+    startY:y,
     head:[["No","Date","Material","Challan","Trip","Tanker","Amount"]],
-    body:rows,
-    styles:{fontSize:9},
-    headStyles:{fillColor:[0,0,0]}
+    body:rows
   });
 
-  // Total
-  doc.setFontSize(12);
-  doc.text(
-    "Total: ₹ " + total.toFixed(2),
-    140,
-    doc.lastAutoTable.finalY + 10
-  );
+  let finalY=doc.lastAutoTable.finalY+10;
 
-  doc.save("Billing_Report.pdf");
+  // total
+  doc.text("Total: ₹ "+total.toFixed(2),140,finalY);
+
+  finalY+=8;
+
+  // amount in words
+  doc.text("Amount in Words: "+numberToWords(Math.floor(total))+" Only",10,finalY);
+
+  finalY+=15;
+
+  // footer name
+  doc.text("For "+comp,140,finalY);
+
+  doc.save("Bill.pdf");
 }
 
 </script>
