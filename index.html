@@ -9,7 +9,12 @@
 
 <style>
 body { background-color:#f8fafc;font-family:'Segoe UI',sans-serif; }
-input,textarea,select{border:1px solid #ccc;border-radius:5px;padding:4px 8px;width:100%;}
+input,textarea,select{
+  border:1px solid #000;
+  border-radius:5px;
+  padding:4px 8px;
+  width:100%;
+}
 label{font-weight:600;}
 table input,table select{width:100%;}
 </style>
@@ -27,7 +32,7 @@ table input,table select{width:100%;}
     <label>Customer Name</label>
     <input id="clientName" value="CHETAN ATMARAM HATMODE">
 
-    <label>Customer Address</label>
+    <label class="mt-2 block">Customer Address</label>
     <input id="clientAddr" value="At-Giravle, Post- Somatane, Tal- Panvel, Dist- Raigad, PIN- 410206">
   </div>
 
@@ -42,7 +47,7 @@ table input,table select{width:100%;}
 
 <div class="mb-4">
   <label>Company</label>
-  <textarea id="company" rows="4">TODAYGLOBAL PROPERTIES OfficeNo. 1601-1602, Navi Mumbai</textarea>
+  <textarea id="company" rows="3">TODAYGLOBAL PROPERTIES OfficeNo. 1601-1602, Navi Mumbai</textarea>
 </div>
 
 <div class="mb-4">
@@ -51,17 +56,17 @@ table input,table select{width:100%;}
 </div>
 
 <!-- Table -->
-<table class="table-auto w-full border mb-4">
-<thead class="bg-gray-100">
-<tr>
-<th class="border">Sr No</th>
-<th class="border">Date</th>
-<th class="border">Material</th>
-<th class="border">Challan</th>
-<th class="border">Trip</th>
-<th class="border">Tanker</th>
-<th class="border">Amount</th>
-<th class="border">Action</th>
+<table class="table-auto w-full border border-black mb-4">
+<thead>
+<tr class="bg-gray-200">
+<th class="border border-black">Sr No</th>
+<th class="border border-black">Date</th>
+<th class="border border-black">Material</th>
+<th class="border border-black">Challan</th>
+<th class="border border-black">Trip</th>
+<th class="border border-black">Tanker</th>
+<th class="border border-black">Amount</th>
+<th class="border border-black">Action</th>
 </tr>
 </thead>
 
@@ -77,7 +82,7 @@ table input,table select{width:100%;}
 <option>MH06BD0396</option>
 <option>MH24F9843</option>
 <option>MH20BT2374</option>
-<option>MH12FZ6990</option>  
+<option>MH12FZ6990</option>
 </select>
 </td>
 <td class="border"><input type="number" placeholder="Enter Amount"></td>
@@ -88,8 +93,8 @@ table input,table select{width:100%;}
 </tbody>
 </table>
 
-<button onclick="addRow()" class="bg-green-500 text-white px-3 py-1">+ Add Row</button>
-<button id="generatePDF" class="bg-blue-500 text-white px-3 py-1">Generate PDF</button>
+<button onclick="addRow()" class="bg-green-500 text-white px-3 py-1 rounded">+ Add Row</button>
+<button id="generatePDF" class="bg-blue-500 text-white px-3 py-1 rounded">Generate PDF</button>
 
 </div>
 
@@ -98,7 +103,7 @@ table input,table select{width:100%;}
 
 <script>
 
-// Get First Date of Current Month
+// First Date of Current Month
 function getFirstDateOfMonth(){
   const t = new Date();
   const yyyy = t.getFullYear();
@@ -106,7 +111,7 @@ function getFirstDateOfMonth(){
   return `${yyyy}-${mm}-01`;
 }
 
-// Set default dates on load
+// Set default date
 document.addEventListener("DOMContentLoaded", ()=>{
   const firstDate = getFirstDateOfMonth();
   document.getElementById("invoiceDate").value = firstDate;
@@ -142,10 +147,11 @@ function addRow(){
 // Remove Row
 function removeRow(btn){
   btn.closest("tr").remove();
-  [...document.querySelectorAll("#tableBody tr")].forEach((r,i)=>r.cells[0].innerText=i+1);
+  [...document.querySelectorAll("#tableBody tr")]
+    .forEach((r,i)=>r.cells[0].innerText=i+1);
 }
 
-// Format Date
+// Format Date dd-mm-yyyy
 function formatDate(d){
   if(!d) return "";
   const [y,m,da]=d.split("-");
@@ -154,35 +160,78 @@ function formatDate(d){
 
 // Generate PDF
 document.getElementById("generatePDF").onclick = ()=>{
+
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF();
+
+  // Header Data
+  const clientName = document.getElementById("clientName").value;
+  const clientAddr = document.getElementById("clientAddr").value;
+  const invoiceDate = formatDate(document.getElementById("invoiceDate").value);
+  const invoiceNo = document.getElementById("invoiceNo").value;
+  const company = document.getElementById("company").value;
+  const subject = document.getElementById("subject").value;
+
+  // Header
+  doc.setFontSize(14);
+  doc.text("BILL", 90, 10);
+
+  doc.setFontSize(10);
+  doc.text(`Customer: ${clientName}`,10,20);
+  doc.text(`Address: ${clientAddr}`,10,26);
+
+  doc.text(`Invoice No: ${invoiceNo}`,140,20);
+  doc.text(`Date: ${invoiceDate}`,140,26);
+
+  doc.text(`Company: ${company}`,10,34);
+  doc.text(`Subject: ${subject}`,10,40);
 
   let rows=[];
   let total=0;
 
   document.querySelectorAll("#tableBody tr").forEach((r,i)=>{
     const inp=r.querySelectorAll("input,select");
-    const amt=parseFloat(inp[5].value||0);
-    total+=amt;
+
+    const date = inp[0].value;
+    const material = inp[1].value;
+    const challan = inp[2].value;
+    const trip = inp[3].value;
+    const tanker = inp[4].value;
+    const amount = parseFloat(inp[5].value || 0);
+
+    if(!date && !amount) return;
+
+    total += amount;
 
     rows.push([
       i+1,
-      formatDate(inp[0].value),
-      inp[1].value,
-      inp[2].value,
-      inp[3].value,
-      inp[4].value,
-      amt.toFixed(2)
+      formatDate(date),
+      material,
+      challan,
+      trip,
+      tanker,
+      amount.toFixed(2)
     ]);
   });
 
+  // Table
   doc.autoTable({
+    startY:45,
     head:[["No","Date","Material","Challan","Trip","Tanker","Amount"]],
-    body:rows
+    body:rows,
+    styles:{fontSize:9},
+    headStyles:{fillColor:[0,0,0]}
   });
 
-  doc.text("Total: "+total.toFixed(2),10,doc.lastAutoTable.finalY+10);
-  doc.save("bill.pdf");
+  // Total
+  doc.setFontSize(12);
+  doc.text(
+    "Total: ₹ " + total.toFixed(2),
+    140,
+    doc.lastAutoTable.finalY + 10
+  );
+
+  doc.save("Billing_Report.pdf");
 }
 
 </script>
